@@ -1,18 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import ReactDOM from "react-dom";
+
+import ThemeContext from "./ThemeContext";
 
 import "./styles.css";
 
 // Composant en fin de chaine
 // Il reçoit dans ses props le thème et la fonction qui permet de le changer
 function ThemeChoice(props) {
+
+  const { theme, updateTheme } = useContext(ThemeContext);
+
   const handleChange = event => {
     const value = event.currentTarget.value;
-    props.updateTheme(value);
+    updateTheme(value);
   };
 
   return (
-    <select name="theme" defaultValue={props.theme} onChange={handleChange}>
+    <select name="theme" defaultValue={theme} onChange={handleChange}>
       <option value="dark">Sombre</option>
       <option value="light">Clair</option>
     </select>
@@ -28,7 +33,7 @@ function ToolBar(props) {
     <div>
       <button>Zoomer</button>
       <button>Dezoomer</button>
-      <ThemeChoice theme={props.theme} updateTheme={props.updateTheme} />
+      <ThemeChoice />
     </div>
   );
 }
@@ -38,11 +43,18 @@ function App() {
   // Ca change juste le couleur de la typo ...
   const [theme, setTheme] = useState("light");
 
+  const contextValue = {
+      theme: theme,
+      updateTheme: setTheme
+  };
+
   return (
-    <div className={theme}>
-      <ToolBar theme={theme} updateTheme={setTheme} />
-      <p>Theme utilisé : {theme}</p>
-    </div>
+    <ThemeContext.Provider value={contextValue}>
+        <div className={theme}>
+            <ToolBar />
+            <p>Theme utilisé : {theme}</p>
+        </div>
+    </ThemeContext.Provider>
   );
 }
 
