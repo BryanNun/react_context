@@ -1,12 +1,50 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import "./styles.css";
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+// Composant en fin de chaine
+// Il reçoit dans ses props le thème et la fonction qui permet de le changer
+function ThemeChoice(props) {
+  const handleChange = event => {
+    const value = event.currentTarget.value;
+    props.updateTheme(value);
+  };
+
+  return (
+    <select name="theme" defaultValue={props.theme} onChange={handleChange}>
+      <option value="dark">Sombre</option>
+      <option value="light">Clair</option>
+    </select>
+  );
+}
+
+// Composant en deuxième ligne
+// Il reçoit dans ses props le thème et la fonction qui permet de le changer
+// Notons qu'en vrai il en a rien à foutre il s'en sert pas lui même
+// C'est uniquement pour pouvoir le passer au composant ThemeChoice ...
+function ToolBar(props) {
+  return (
+    <div>
+      <button>Zoomer</button>
+      <button>Dezoomer</button>
+      <ThemeChoice theme={props.theme} updateTheme={props.updateTheme} />
+    </div>
+  );
+}
+
+function App() {
+  // Le thème est en fait une classe CSS qui englobera notre app
+  // Ca change juste le couleur de la typo ...
+  const [theme, setTheme] = useState("light");
+
+  return (
+    <div className={theme}>
+      <ToolBar theme={theme} updateTheme={setTheme} />
+      <p>Theme utilisé : {theme}</p>
+    </div>
+  );
+}
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(<App />, rootElement);
